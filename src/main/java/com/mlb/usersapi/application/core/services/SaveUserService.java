@@ -1,18 +1,18 @@
 package com.mlb.usersapi.application.core.services;
 
 import com.mlb.usersapi.application.core.domain.User;
-import com.mlb.usersapi.application.ports.primary.SaveUserPort;
+import com.mlb.usersapi.application.ports.primary.SaveUserServicePort;
 
-public class SaveUserService implements SaveUserPort {
+public class SaveUserService implements SaveUserServicePort {
 
-    private final SaveUserPort saveUserPort;
+    private final SaveUserServicePort saveUserServicePort;
 
-    public SaveUserService(SaveUserPort saveUserPort) {
-        this.saveUserPort = saveUserPort;
+    public SaveUserService(SaveUserServicePort saveUserServicePort) {
+        this.saveUserServicePort = saveUserServicePort;
     }
 
     @Override
     public User save(User user) {
-        return saveUserPort.save(user);
+        return saveUserServicePort.save(user);
     }
 }
