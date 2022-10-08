@@ -1,4 +1,4 @@
-package com.mlb.usersapi.application.ports.primary;
+package com.mlb.usersapi.application.ports.secondary;
 
 import com.mlb.usersapi.application.core.domain.User;
 
