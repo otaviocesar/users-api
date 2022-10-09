@@ -1,6 +1,7 @@
 package com.mlb.usersapi.adapters.inbound;
 import lombok.AllArgsConstructor;
 
+import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
@@ -15,6 +16,7 @@ import com.mlb.usersapi.adapters.inbound.dtos.UserDTO;
 import com.mlb.usersapi.adapters.inbound.mappers.UserDTOToUserMapper;
 import com.mlb.usersapi.application.core.domain.User;
 import com.mlb.usersapi.application.core.exception.ErrorResponse;
+import com.mlb.usersapi.application.ports.primary.DeleteUserServicePort;
 import com.mlb.usersapi.application.ports.primary.FindAllUsersServicePort;
 import com.mlb.usersapi.application.ports.primary.FindByIdUserServicePort;
 import com.mlb.usersapi.application.ports.primary.SaveUserServicePort;
@@ -39,6 +41,8 @@ public class UserController {
     private final FindAllUsersServicePort findAllUsersServicePort;
 
     private final FindByIdUserServicePort findByIdUserServicePort;
+
+    private final DeleteUserServicePort deleteUserServicePort;
 
     private final UserDTOToUserMapper userDTOToUserMapper;
     
@@ -79,8 +83,8 @@ public class UserController {
     }
 
     @Operation(
-        summary = "List users",
-        description = "Returns list of registered users",
+        summary = "Find user by id",
+        description = "Returns a user by id if it exists",
         tags = {"users"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Ok."),
@@ -92,5 +96,22 @@ public class UserController {
     @GetMapping("/{id}")
     public ResponseEntity<User> findById(@PathVariable(value = "id") Long id){
         return ResponseEntity.status(HttpStatus.OK).body(findByIdUserServicePort.findById(id));
+    }
+
+    @Operation(
+        summary = "Delete user by id",
+        description = "Delete a user by id if it exists",
+        tags = {"users"},
+        responses = {
+            @ApiResponse(responseCode = "200", description = "User deleted successfully."),
+            @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        }
+    )
+    @DeleteMapping("/{id}")
+    public ResponseEntity<Object> delete(@PathVariable(value = "id") Long id){
+        deleteUserServicePort.delete(id);
+        return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully.");
     }
 }
