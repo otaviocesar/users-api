@@ -5,4 +5,6 @@ import org.springframework.data.jpa.repository.JpaRepository;
 import com.mlb.usersapi.adapters.inbound.entity.UserEntity;
 
 public interface UserRepository extends JpaRepository<UserEntity, Long> {
+    boolean existsByCpf(String cpf);
+    boolean existsByEmail(String email);
 }
