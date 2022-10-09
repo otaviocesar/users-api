@@ -1,5 +1,8 @@
 package com.mlb.usersapi.adapters.inbound.mappers;
 
+import java.util.ArrayList;
+import java.util.List;
+
 import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
@@ -15,4 +18,11 @@ public class UserEntityToUserMapper {
           return user;
      }
 
+     public List<User> listMapper(List<UserEntity> usersList) {
+          List<User> users = new ArrayList<User>();
+          for (UserEntity userEntity : usersList){
+               users.add(mapper(userEntity));
+          }
+          return users;
+     }
 }
