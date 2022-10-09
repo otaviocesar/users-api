@@ -2,6 +2,7 @@ package com.mlb.usersapi.adapters.inbound;
 import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
@@ -15,6 +16,7 @@ import com.mlb.usersapi.adapters.inbound.mappers.UserDTOToUserMapper;
 import com.mlb.usersapi.application.core.domain.User;
 import com.mlb.usersapi.application.core.exception.ErrorResponse;
 import com.mlb.usersapi.application.ports.primary.FindAllUsersServicePort;
+import com.mlb.usersapi.application.ports.primary.FindByIdUserServicePort;
 import com.mlb.usersapi.application.ports.primary.SaveUserServicePort;
 
 import io.swagger.v3.oas.annotations.Operation;
@@ -35,6 +37,8 @@ public class UserController {
     private final SaveUserServicePort saveUserServicePort;
 
     private final FindAllUsersServicePort findAllUsersServicePort;
+
+    private final FindByIdUserServicePort findByIdUserServicePort;
 
     private final UserDTOToUserMapper userDTOToUserMapper;
     
@@ -72,5 +76,21 @@ public class UserController {
     @GetMapping
     public ResponseEntity<List<User>> getAll(){
         return ResponseEntity.status(HttpStatus.OK).body(findAllUsersServicePort.findAll());
+    }
+
+    @Operation(
+        summary = "List users",
+        description = "Returns list of registered users",
+        tags = {"users"},
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Ok."),
+            @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "404", description = "Not Found.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        }
+    )
+    @GetMapping("/{id}")
+    public ResponseEntity<User> findById(@PathVariable(value = "id") Long id){
+        return ResponseEntity.status(HttpStatus.OK).body(findByIdUserServicePort.findById(id));
     }
 }
