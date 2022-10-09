@@ -3,6 +3,7 @@ import lombok.AllArgsConstructor;
 
 import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
+import org.springframework.web.bind.annotation.PatchMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
@@ -13,7 +14,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
 import org.springframework.http.MediaType;
 
+import com.mlb.usersapi.adapters.inbound.dtos.PatchUserDTO;
 import com.mlb.usersapi.adapters.inbound.dtos.UserDTO;
+import com.mlb.usersapi.adapters.inbound.mappers.PatchUserDTOToUserMapper;
 import com.mlb.usersapi.adapters.inbound.mappers.UserDTOToUserMapper;
 import com.mlb.usersapi.application.core.domain.User;
 import com.mlb.usersapi.application.core.exception.ErrorResponse;
@@ -49,6 +52,8 @@ public class UserController {
     private final UpdateUserServicePort updateUserServicePort;
 
     private final UserDTOToUserMapper userDTOToUserMapper;
+
+    private final PatchUserDTOToUserMapper patchUserDTOToUserMapper;
     
 
     @Operation(
@@ -121,7 +126,7 @@ public class UserController {
 
     @Operation(
         summary = "Update a user",
-        description = "This operation updates a record with user information if it exists",
+        description = "This operation updates a user record if it exists",
         tags = {"users"},
         responses = {
             @ApiResponse(responseCode = "200", description = "Ok."),
@@ -132,6 +137,23 @@ public class UserController {
     @PutMapping("/{id}")
     public ResponseEntity<User> update(@PathVariable(value = "id") Long id, @RequestBody @Valid UserDTO userDTO) {
         User user = userDTOToUserMapper.mapper(userDTO);
+        User userUpdated = updateUserServicePort.update(id, user);
+        return new ResponseEntity<>(userUpdated, HttpStatus.OK);
+    }
+
+    @Operation(
+        summary = "Partially update a user",
+        description = "This operation partially updates a user record if it exists",
+        tags = {"users"},
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Ok."),
+            @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        }
+    )
+    @PatchMapping("/{id}")
+    public ResponseEntity<User> patch(@PathVariable(value = "id") Long id, @RequestBody @Valid PatchUserDTO patchUserDTO) {
+        User user = patchUserDTOToUserMapper.mapper(patchUserDTO);
         User userUpdated = updateUserServicePort.update(id, user);
         return new ResponseEntity<>(userUpdated, HttpStatus.OK);
     }
