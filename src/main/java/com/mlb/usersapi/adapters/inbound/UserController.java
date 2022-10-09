@@ -5,6 +5,7 @@ import org.springframework.web.bind.annotation.DeleteMapping;
 import org.springframework.web.bind.annotation.GetMapping;
 import org.springframework.web.bind.annotation.PathVariable;
 import org.springframework.web.bind.annotation.PostMapping;
+import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
 import org.springframework.web.bind.annotation.RestController;
@@ -20,6 +21,7 @@ import com.mlb.usersapi.application.ports.primary.DeleteUserServicePort;
 import com.mlb.usersapi.application.ports.primary.FindAllUsersServicePort;
 import com.mlb.usersapi.application.ports.primary.FindByIdUserServicePort;
 import com.mlb.usersapi.application.ports.primary.SaveUserServicePort;
+import com.mlb.usersapi.application.ports.primary.UpdateUserServicePort;
 
 import io.swagger.v3.oas.annotations.Operation;
 import io.swagger.v3.oas.annotations.responses.*;
@@ -44,6 +46,8 @@ public class UserController {
 
     private final DeleteUserServicePort deleteUserServicePort;
 
+    private final UpdateUserServicePort updateUserServicePort;
+
     private final UserDTOToUserMapper userDTOToUserMapper;
     
 
@@ -61,8 +65,8 @@ public class UserController {
     @PostMapping(
 		consumes = MediaType.APPLICATION_JSON_VALUE
 	)
-    public ResponseEntity<User> save(@RequestBody @Valid UserDTO saveUserDTO) {
-        User user = saveUserServicePort.save(userDTOToUserMapper.mapper(saveUserDTO));
+    public ResponseEntity<User> save(@RequestBody @Valid UserDTO userDTO) {
+        User user = saveUserServicePort.save(userDTOToUserMapper.mapper(userDTO));
         return new ResponseEntity<>(user, HttpStatus.CREATED);
     }
 
@@ -113,5 +117,22 @@ public class UserController {
     public ResponseEntity<Object> delete(@PathVariable(value = "id") Long id){
         deleteUserServicePort.delete(id);
         return ResponseEntity.status(HttpStatus.OK).body("User deleted successfully.");
+    }
+
+    @Operation(
+        summary = "Update a user",
+        description = "This operation updates a record with user information if it exists",
+        tags = {"users"},
+        responses = {
+            @ApiResponse(responseCode = "200", description = "Ok."),
+            @ApiResponse(responseCode = "400", description = "Bad Request.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+            @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
+        }
+    )
+    @PutMapping("/{id}")
+    public ResponseEntity<User> update(@PathVariable(value = "id") Long id, @RequestBody @Valid UserDTO userDTO) {
+        User user = userDTOToUserMapper.mapper(userDTO);
+        User userUpdated = updateUserServicePort.update(id, user);
+        return new ResponseEntity<>(userUpdated, HttpStatus.OK);
     }
 }
