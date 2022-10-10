@@ -20,7 +20,11 @@ public class FindAllUsersAdapter implements FindAllUsersPort {
     private final UserEntityToUserMapper userEntityToUserMapper;
 
     @Override
-    public List<User> findAll() {
-        return userEntityToUserMapper.listMapper(userRepository.findAll());
+    public List<User> findAll(String name) {
+        if(name != null) {
+            return userEntityToUserMapper.listMapper(userRepository.findByName(name));
+        } else{
+            return userEntityToUserMapper.listMapper(userRepository.findAll());
+        }
     }
 }

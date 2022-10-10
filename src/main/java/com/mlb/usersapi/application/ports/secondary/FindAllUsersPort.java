@@ -5,5 +5,5 @@ import java.util.List;
 import com.mlb.usersapi.application.core.domain.User;
 
 public interface FindAllUsersPort {
-    List<User> findAll();
+    List<User> findAll(String name);
 }

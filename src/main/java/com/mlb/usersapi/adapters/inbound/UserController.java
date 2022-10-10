@@ -9,6 +9,7 @@ import org.springframework.web.bind.annotation.PostMapping;
 import org.springframework.web.bind.annotation.PutMapping;
 import org.springframework.web.bind.annotation.RequestBody;
 import org.springframework.web.bind.annotation.RequestMapping;
+import org.springframework.web.bind.annotation.RequestParam;
 import org.springframework.web.bind.annotation.RestController;
 import org.springframework.http.ResponseEntity;
 import org.springframework.http.HttpStatus;
@@ -86,9 +87,9 @@ public class UserController {
             @ApiResponse(responseCode = "500", description = "Internal Server Error.", content = @Content(schema = @Schema(implementation = ErrorResponse.class))),
         }
     )
-    @GetMapping
-    public ResponseEntity<List<User>> getAll(){
-        return ResponseEntity.status(HttpStatus.OK).body(findAllUsersServicePort.findAll());
+    @GetMapping 
+    public ResponseEntity<List<User>> getAll(@RequestParam(value = "name", required = false) String name){
+        return ResponseEntity.status(HttpStatus.OK).body(findAllUsersServicePort.findAll(name));
     }
 
     @Operation(

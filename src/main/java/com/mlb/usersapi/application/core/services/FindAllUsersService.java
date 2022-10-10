@@ -15,7 +15,7 @@ public class FindAllUsersService implements FindAllUsersServicePort {
     }
 
     @Override
-    public List<User> findAll() {
-        return findAllUsersPort.findAll();
+    public List<User> findAll(String name) {
+        return findAllUsersPort.findAll(name);
     }
 }
