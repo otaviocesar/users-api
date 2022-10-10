@@ -5,11 +5,10 @@ import org.junit.jupiter.api.DisplayName;
 import org.junit.jupiter.api.Test;
 import org.springframework.beans.factory.annotation.Autowired;
 import org.springframework.boot.test.autoconfigure.orm.jpa.DataJpaTest;
-import org.springframework.orm.jpa.JpaSystemException;
 
 import com.mlb.usersapi.adapters.inbound.entity.UserEntity;
 import com.mlb.usersapi.adapters.outbound.repository.UserRepository;
-import com.mlb.usersapi.util.UserFactory;
+import com.mlb.usersapi.util.UserEntityFactory;
 
 import java.util.List;
 import java.util.Optional;
@@ -23,7 +22,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("Save persists user when Successful")
     void save_PersistUserEntity_WhenSuccessful(){
-        UserEntity userToBeSaved = UserFactory.createUserToBeSaved();
+        UserEntity userToBeSaved = UserEntityFactory.createUserToBeSaved();
 
         UserEntity userSaved = this.userRepository.save(userToBeSaved);
 
@@ -37,7 +36,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("Save updates user when Successful")
     void save_UpdatesUserEntity_WhenSuccessful(){
-        UserEntity userToBeSaved = UserFactory.createUserToBeSaved();
+        UserEntity userToBeSaved = UserEntityFactory.createUserToBeSaved();
 
         UserEntity userSaved = this.userRepository.save(userToBeSaved);
 
@@ -55,7 +54,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("Delete removes user when Successful")
     void delete_RemovesUserEntity_WhenSuccessful(){
-        UserEntity userToBeSaved = UserFactory.createUserToBeSaved();
+        UserEntity userToBeSaved = UserEntityFactory.createUserToBeSaved();
 
         UserEntity userSaved = this.userRepository.save(userToBeSaved);
 
@@ -70,7 +69,7 @@ class UserRepositoryTest {
     @Test
     @DisplayName("Find By Name returns list of user when Successful")
     void findByName_ReturnsListOfUserEntity_WhenSuccessful(){
-        UserEntity userToBeSaved = UserFactory.createUserToBeSaved();
+        UserEntity userToBeSaved = UserEntityFactory.createUserToBeSaved();
 
         UserEntity userSaved = this.userRepository.save(userToBeSaved);
 
@@ -89,13 +88,5 @@ class UserRepositoryTest {
         List<UserEntity> users = this.userRepository.findByName("non-existent-name");
 
         Assertions.assertThat(users).isEmpty();
-    }
-
-    @Test
-    @DisplayName("Save throw JpaSystemException when name is empty")
-    void save_ThrowsConstraintViolationException_WhenNameIsEmpty(){
-		UserEntity user = UserFactory.createInvalidUser();
-        Assertions.assertThatThrownBy(() -> this.userRepository.save(user))
-                .isInstanceOf(JpaSystemException.class);
-    }   
+    } 
 }
