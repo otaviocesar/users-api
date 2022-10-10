@@ -27,7 +27,7 @@ import java.util.List;
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
 @AutoConfigureTestDatabase
 @DirtiesContext(classMode = DirtiesContext.ClassMode.BEFORE_EACH_TEST_METHOD)
-class UserControllerIntegrationTest {
+class UserControllerIT {
     @Autowired
     private TestRestTemplate testRestTemplate;
     @LocalServerPort
