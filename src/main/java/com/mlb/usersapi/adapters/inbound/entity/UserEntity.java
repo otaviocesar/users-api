@@ -1,5 +1,6 @@
 package com.mlb.usersapi.adapters.inbound.entity;
 
+import lombok.Builder;
 import lombok.Getter;
 import lombok.Setter;
 
@@ -9,6 +10,7 @@ import java.time.LocalDate;
 @Entity
 @Getter
 @Setter
+@Builder
 public class UserEntity{
     @Id
     @Column(name = "id", nullable = false)
