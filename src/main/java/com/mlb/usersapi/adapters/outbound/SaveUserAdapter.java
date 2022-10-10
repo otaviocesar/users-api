@@ -31,6 +31,7 @@ public class SaveUserAdapter implements SaveUserPort {
     @Transactional
     public User save(User user) {
         var userEntity = userToUserEntityMapper.mapper(user);
+        userEntity.setCpf(formatCpf(userEntity.getCpf()));
         checkExistsByCpf(userEntity);
         checkExistsByEmail(userEntity);
         checkUserAge(userEntity);
@@ -50,9 +51,18 @@ public class SaveUserAdapter implements SaveUserPort {
     }
 
     public void checkUserAge(UserEntity userEntity) {
+        try {
+            LocalDate.parse(userEntity.getBirthDate().toString());
+        } catch (Exception e) {
+            throw new BadRequestException("Invalid date. Example: [yyyy-mm-dd]");
+        }
         int userAge = Period.between(userEntity.getBirthDate(), LocalDate.now()).getYears();
         if (userAge < 18){
             throw new BadRequestException("User is " + userAge + " years old. Must be over 18 years old.");
         }
+    }
+
+    public String formatCpf(String cpf) {
+        return cpf.replaceAll("[^0-9]", "");
     }
 }

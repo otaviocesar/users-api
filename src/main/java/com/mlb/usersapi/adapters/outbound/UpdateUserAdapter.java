@@ -37,14 +37,19 @@ public class UpdateUserAdapter implements UpdateUserPort {
         if (!userOptional.isPresent()) {
             throw new NotFoundException("User " + id + " does not exist.");
         }
+        userOptional.get().setCpf(formatCpf(userOptional.get().getCpf()));
         checkUserAge(user);
         checkCPFLinkedToAnotherUser(id, user);
         checkEmailLinkedToAnotherUser(id, user);
-
         return userEntityToUserMapper.mapper(userRepository.save(updateUserMapper.mapper(userOptional, user)));
     }
 
     public void checkUserAge(User user) {
+        try {
+            LocalDate.parse(user.getBirthDate().toString());
+        } catch (Exception e) {
+            throw new BadRequestException("Invalid date. Example: [yyyy-mm-dd]");
+        }
         int userAge = Period.between(user.getBirthDate(), LocalDate.now()).getYears();
         if (userAge < 18){
             throw new BadRequestException("User is " + userAge + " years old. Must be over 18 years old.");
@@ -63,5 +68,9 @@ public class UpdateUserAdapter implements UpdateUserPort {
         if (userEmail.isPresent() && (!userEmail.get().getId().equals(id))){
             throw new ConflictException("email " + user.getEmail() + " is already linked to another record.");
         }
+    }
+
+    public String formatCpf(String cpf) {
+        return cpf.replaceAll("[^0-9]", "");
     }
 }
