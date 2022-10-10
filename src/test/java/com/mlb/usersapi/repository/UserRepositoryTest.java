@@ -1,4 +1,4 @@
-package com.mlb.usersapi;
+package com.mlb.usersapi.repository;
 
 import org.assertj.core.api.Assertions;
 import org.junit.jupiter.api.DisplayName;
