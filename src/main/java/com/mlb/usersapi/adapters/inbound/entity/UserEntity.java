@@ -1,16 +1,20 @@
 package com.mlb.usersapi.adapters.inbound.entity;
 
+import lombok.AllArgsConstructor;
 import lombok.Builder;
 import lombok.Getter;
+import lombok.NoArgsConstructor;
 import lombok.Setter;
 
 import javax.persistence.*;
 import java.time.LocalDate;
 
 @Entity
-@Getter
-@Setter
-@Builder
+@Builder()
+@AllArgsConstructor()
+@NoArgsConstructor
+@Setter()
+@Getter()
 public class UserEntity{
     @Id
     @Column(name = "id", nullable = false)
