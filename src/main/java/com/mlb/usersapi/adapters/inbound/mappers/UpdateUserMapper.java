@@ -2,7 +2,6 @@ package com.mlb.usersapi.adapters.inbound.mappers;
 
 import java.util.Optional;
 
-import org.springframework.beans.BeanUtils;
 import org.springframework.stereotype.Component;
 
 import com.mlb.usersapi.adapters.inbound.entity.UserEntity;
