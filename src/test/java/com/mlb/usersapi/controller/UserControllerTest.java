@@ -13,7 +13,9 @@ import org.springframework.http.ResponseEntity;
 import org.springframework.test.context.junit.jupiter.SpringExtension;
 
 import com.mlb.usersapi.adapters.inbound.UserController;
+import com.mlb.usersapi.adapters.inbound.dtos.PatchUserDTO;
 import com.mlb.usersapi.adapters.inbound.dtos.UserDTO;
+import com.mlb.usersapi.adapters.inbound.mappers.PatchUserDTOToUserMapper;
 import com.mlb.usersapi.adapters.inbound.mappers.UserDTOToUserMapper;
 import com.mlb.usersapi.application.core.domain.User;
 import com.mlb.usersapi.application.ports.primary.DeleteUserServicePort;
@@ -21,6 +23,7 @@ import com.mlb.usersapi.application.ports.primary.FindAllUsersServicePort;
 import com.mlb.usersapi.application.ports.primary.FindByIdUserServicePort;
 import com.mlb.usersapi.application.ports.primary.SaveUserServicePort;
 import com.mlb.usersapi.application.ports.primary.UpdateUserServicePort;
+import com.mlb.usersapi.util.PatchUserDTOFactory;
 import com.mlb.usersapi.util.UpdateUserDTOFactory;
 import com.mlb.usersapi.util.UserDTOFactory;
 import com.mlb.usersapi.util.UserFactory;
@@ -44,6 +47,8 @@ class UserControllerTest {
     private FindByIdUserServicePort findByIdUserServiceMock;
     @Mock
     private UserDTOToUserMapper userDTOToUserMapperMock;
+    @Mock
+    private PatchUserDTOToUserMapper patchUserDTOToUserMapper;
 
     @BeforeEach
     void setUp(){
@@ -63,7 +68,10 @@ class UserControllerTest {
                 .thenReturn(UserFactory.createValidUser());
 
         BDDMockito.when(updateUserServiceMock.update(ArgumentMatchers.anyLong(), ArgumentMatchers.any(User.class)))
-                .thenReturn(UserFactory.createValidUser());                
+                .thenReturn(UserFactory.createValidUser());  
+                
+        BDDMockito.when(patchUserDTOToUserMapper.mapper(ArgumentMatchers.any(PatchUserDTO.class)))
+                .thenReturn(UserFactory.createValidUser());
     }
 
     @Test
@@ -144,6 +152,20 @@ class UserControllerTest {
                 .doesNotThrowAnyException();
 
         ResponseEntity<User> entity = userController.update(1L, UpdateUserDTOFactory.createUserPutRequestBody());
+
+        Assertions.assertThat(entity).isNotNull();
+
+        Assertions.assertThat(entity.getStatusCode()).isEqualTo(HttpStatus.OK);
+    }
+
+    @Test
+    @DisplayName("patch user when successful")
+    void patchUser_WhenSuccessful(){
+
+        Assertions.assertThatCode(() ->userController.patch(1L, PatchUserDTOFactory.createUserPutRequestBody()))
+                .doesNotThrowAnyException();
+
+        ResponseEntity<User> entity = userController.patch(1L, PatchUserDTOFactory.createUserPutRequestBody());
 
         Assertions.assertThat(entity).isNotNull();
 
