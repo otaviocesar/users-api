@@ -1,5 +1,7 @@
 # Users API
 
+![alt text](src/main/resources/users-api.png)
+
 # Descrição
 
 Este projeto é uma API RESTful para o recurso de usuários, com as operações de cadastro, atualização, busca de um único recurso, busca de vários recursos com a possibilidade de filtro por nome. 
@@ -16,7 +18,8 @@ Este projeto é uma API RESTful para o recurso de usuários, com as operações 
       - [Arquitetura Hexagonal (Portas e Adaptadores)](#arquitetura-hexagonal-portas-e-adaptadores)
     - [Instalação](#instalação)
     - [Padronização de Commits](#padronização-de-commits)
-  - [Executando a aplicação](#executando-a-aplicação)
+  - [Executando a aplicação com Docker Compose](#executando-a-aplicação-com-docker-compose)
+  - [Executando a aplicação localmente](#executando-a-aplicação-localmente)
   - [Testes Unitários e de Integração](#testes-unitários-e-de-integração)
   - [Operações da API](#operações-da-api)
   - [Swagger - Documentação e Testes](#swagger---documentação-e-testes)
@@ -116,7 +119,19 @@ Isso garantirá que suas mensagens de commit sigam o [Conventional Commits Speci
 
 ---
 
-## Executando a aplicação
+## Executando a aplicação com Docker Compose
+
+```bash
+$ ./mvnw clean package -DskipTests
+```
+
+```bash
+$ docker-compose up
+```
+
+---
+
+## Executando a aplicação localmente
 
 ```bash
 $ ./mvnw spring-boot:run
