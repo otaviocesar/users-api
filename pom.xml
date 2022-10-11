@@ -98,6 +98,34 @@
 					<excludeDevTools>false</excludeDevTools>
 				</configuration>
 			</plugin>
+			<plugin>
+			<groupId>org.jacoco</groupId>
+			<artifactId>jacoco-maven-plugin</artifactId>
+			<version>0.8.2</version>
+			<configuration>
+				<excludes>
+					<exclude>**/config/*</exclude>
+					<exclude>**/*DTO.*</exclude>
+					<exclude>**/*Mapper.*</exclude>
+					<exclude>**/*Adapter.*</exclude>
+					<exclude>**/*Application.*</exclude>
+				</excludes>
+			</configuration>
+			<executions>
+				<execution>
+					<goals>
+						<goal>prepare-agent</goal>
+					</goals>
+				</execution>
+				<execution>
+					<id>report</id>
+					<phase>prepare-package</phase>
+					<goals>
+						<goal>report</goal>
+					</goals>
+				</execution>
+			</executions>
+		</plugin>
 		</plugins>
 	</build>
 
