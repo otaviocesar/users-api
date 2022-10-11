@@ -22,6 +22,7 @@ import com.mlb.usersapi.application.core.domain.User;
 import com.mlb.usersapi.util.UserDTOFactory;
 import com.mlb.usersapi.util.UserEntityFactory;
 
+import java.time.LocalDate;
 import java.util.List;
 
 @SpringBootTest(webEnvironment = SpringBootTest.WebEnvironment.RANDOM_PORT)
@@ -113,7 +114,49 @@ class UserControllerIT {
         Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.CREATED);
         Assertions.assertThat(userResponseEntity.getBody()).isNotNull();
         Assertions.assertThat(userResponseEntity.getBody().getId()).isNotNull();
+    }
 
+    @Test
+    @DisplayName("save user with cpf already registered Return Conflict")
+    void save_User_Cpf_AlreadyRegistered_ReturnConflict(){
+        UserEntity savedUser = userRepository.save(UserEntityFactory.createUserToBeSaved());
+
+        UserDTO userPostRequestBody = UserDTOFactory.createUserPostRequestBody();
+        userPostRequestBody.setCpf(savedUser.getCpf());
+
+        ResponseEntity<User> userResponseEntity = testRestTemplate.postForEntity("/users", userPostRequestBody, User.class);
+
+        Assertions.assertThat(userResponseEntity).isNotNull();
+        Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+
+    }
+
+    @Test
+    @DisplayName("save user with email already registered Return Conflict")
+    void save_User_Email_AlreadyRegistered_ReturnConflict(){
+        UserEntity savedUser = userRepository.save(UserEntityFactory.createUserToBeSaved());
+
+        UserDTO userPostRequestBody = UserDTOFactory.createUserPostRequestBody();
+        userPostRequestBody.setEmail(savedUser.getEmail());
+
+        ResponseEntity<User> userResponseEntity = testRestTemplate.postForEntity("/users", userPostRequestBody, User.class);
+
+        Assertions.assertThat(userResponseEntity).isNotNull();
+        Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.CONFLICT);
+
+    }
+
+    @Test
+    @DisplayName("save user user under 18 Return BadRequest")
+    void save_User_Under_18_ReturnBadRequest(){
+
+        UserDTO userPostRequestBody = UserDTOFactory.createUserPostRequestBody();
+        userPostRequestBody.setBirthDate(LocalDate.now());
+
+        ResponseEntity<User> userResponseEntity = testRestTemplate.postForEntity("/users", userPostRequestBody, User.class);
+
+        Assertions.assertThat(userResponseEntity).isNotNull();
+        Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
     }
 
     @Test
@@ -132,6 +175,34 @@ class UserControllerIT {
     }
 
     @Test
+    @DisplayName("update non-existent user should return NotFound")
+    void updateNonExistentUser_return_NotFound(){
+
+        UserEntity savedUser = userRepository.save(UserEntityFactory.createUserToBeSaved());
+
+        savedUser.setName("João John");
+
+        ResponseEntity<Void> userResponseEntity = testRestTemplate.exchange("/users/{id}",
+                HttpMethod.PUT,new HttpEntity<>(savedUser), Void.class, -1L);
+
+        Assertions.assertThat(userResponseEntity).isNotNull();
+
+        Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
+
+    @Test
+    @DisplayName("update invalid request should return BadRequest")
+    void updateInvalidRequest_return_BadRequest(){
+
+        ResponseEntity<Void> userResponseEntity = testRestTemplate.exchange("/users/{id}",
+                HttpMethod.PUT,null, Void.class, -1L);
+
+        Assertions.assertThat(userResponseEntity).isNotNull();
+
+        Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.BAD_REQUEST);
+    }
+
+    @Test
     @DisplayName("delete removes user when successful")
     void delete_RemovesUser_WhenSuccessful(){
         UserEntity savedUser = userRepository.save(UserEntityFactory.createUserToBeSaved());
@@ -144,4 +215,15 @@ class UserControllerIT {
         Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.OK);
     }
 
+    @Test
+    @DisplayName("delete non-existent user should return NotFound")
+    void deleteNonExistentUser_return_NotFound(){
+
+        ResponseEntity<Void> userResponseEntity = testRestTemplate.exchange("/users/{id}",
+                HttpMethod.DELETE,null, Void.class, -1L);
+
+        Assertions.assertThat(userResponseEntity).isNotNull();
+
+        Assertions.assertThat(userResponseEntity.getStatusCode()).isEqualTo(HttpStatus.NOT_FOUND);
+    }
 }
